@@ -538,12 +538,18 @@ namespace
 	void* Decrypt_File_orig;
 	Il2CppString* Decrypt_File_hook(Il2CppString* target, Il2CppString* password, Il2CppString* salt) {
 		Il2CppString* result = reinterpret_cast<decltype(Decrypt_File_hook)*>(Decrypt_File_orig)(target, password, salt);
-		wprintf(L"Decrypt_File_hook: target: %ls, password: %ls, salt: %ls, return: %ls\n", 
+		/*wprintf(L"Decrypt_File_hook: target: %ls, password: %ls, salt: %ls, return: %ls\n", 
 			target->start_char, 
 			password->start_char, 
 			salt->start_char, 
-			result->start_char);
+			result->start_char);*/
 		return result;
+	}
+
+	void* Sqlite_Set_orig;
+	void Sqlite_Set_hook(void* _this, Il2CppString* value) {
+		 wprintf(L"Sqlite_Set_hook: value: %ls\n", value->start_char);
+		 reinterpret_cast<decltype(Sqlite_Set_hook)*>(Sqlite_Set_orig)(_this, value);
 	}
 
 	void* CriWareErrorHandler_HandleMessage_orig;
@@ -1005,6 +1011,10 @@ namespace
 			"PRISM.Legacy.dll", "ENTERPRISE.OutGame",
 			"EncryptionUtility", "Decrypt", 3
 		);
+		auto Sqlite_Set_addr = il2cpp_symbols::get_method_pointer(
+			"Emberbox.dll", "SQLite",
+			"set_DatabasePath", "Decrypt", 1
+		);
 		auto CriWareErrorHandler_HandleMessage_addr = il2cpp_symbols::get_method_pointer(
 			"CriMw.CriWare.Runtime.dll", "CriWare",
 			"CriWareErrorHandler", "HandleMessage", 1
@@ -1063,6 +1073,7 @@ namespace
 		ADD_HOOK(Live_SetEnableDepthOfField, "Live_SetEnableDepthOfField at %p");
 		ADD_HOOK(Live_Update, "Live_Update at %p");
 		ADD_HOOK(Decrypt_File, "Decrypt_File at %p")
+		ADD_HOOK(Sqlite_Set, "Sqlite_Set at %p")
 		ADD_HOOK(CriWareErrorHandler_HandleMessage, "CriWareErrorHandler_HandleMessage at %p");
 		ADD_HOOK(GGIregualDetector_ShowPopup, "GGIregualDetector_ShowPopup at %p");
 		ADD_HOOK(DMMGameGuard_NPGameMonCallback, "DMMGameGuard_NPGameMonCallback at %p");
