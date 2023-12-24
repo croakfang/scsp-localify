@@ -546,10 +546,93 @@ namespace
 		return result;
 	}
 
+	void* Sqlite_BackUp_orig;
+	void Sqlite_BackUp_hook(void* _this, Il2CppString* destinationDatabasePath, Il2CppString* databaseName) {
+		reinterpret_cast<decltype(Sqlite_BackUp_hook)*>(Sqlite_BackUp_orig)(_this, destinationDatabasePath, databaseName);
+	}
+
+
+	std::vector<void*> instances;
+	void BackUpFunc() {
+		for (void* db : instances) {
+			const auto path = L"C:/Users/long1/Desktop/";
+			const auto path_str = il2cpp_symbols::NewWStr(path);
+			const auto name = L"meta.sql";
+			const auto name_str = il2cpp_symbols::NewWStr(path);
+			wprintf(L"####Create BackUp \n");
+			Sqlite_BackUp_hook(db, path_str, name_str);
+		}
+	}
+
 	void* Sqlite_Set_orig;
 	void Sqlite_Set_hook(void* _this, Il2CppString* value) {
-		 wprintf(L"Sqlite_Set_hook: value: %ls\n", value->start_char);
-		 reinterpret_cast<decltype(Sqlite_Set_hook)*>(Sqlite_Set_orig)(_this, value);
+		//wprintf(L"Sqlite_Set_hook: value: %ls\n", value->start_char);
+		reinterpret_cast<decltype(Sqlite_Set_hook)*>(Sqlite_Set_orig)(_this, value);
+	}
+
+	void* Sqlite_Ctor_orig;
+	void Sqlite_Ctor_hook(void* _this, void* connectionString) {
+		wprintf(L"Sqlite_Ctor_hook\n");
+		reinterpret_cast<decltype(Sqlite_Ctor_hook)*>(Sqlite_Ctor_orig)(_this, connectionString);
+	}
+
+	void* Sqlite_Close_orig;
+	void Sqlite_Close_hook(void* _this) {
+		wprintf(L"Sqlite_Close_hook\n");
+		reinterpret_cast<decltype(Sqlite_Close_hook)*>(Sqlite_Close_orig)(_this);
+	}
+
+	void* Sqlite_Execute_orig;
+	int Sqlite_Execute_hook(void* _this, Il2CppString* query, void* args) {
+		wprintf(L"Sqlite_Execute_hook: query: %ls\n", query->start_char);
+		return reinterpret_cast<decltype(Sqlite_Execute_hook)*>(Sqlite_Execute_orig)(_this, query, args);
+	}
+
+	void* Sqlite_Commit_orig;
+	void Sqlite_Commit_hook(void* _this) {
+		wprintf(L"Sqlite_Commit_hook\n");
+		reinterpret_cast<decltype(Sqlite_Commit_hook)*>(Sqlite_Commit_orig)(_this);
+	}
+
+	void* Write_Byte_orig;
+	void Write_Byte_hook(Il2CppString* path, void* bytes) {
+		reinterpret_cast<decltype(Write_Byte_hook)*>(Write_Byte_orig)(path, bytes);
+	}
+
+	void* Decrypt_Aes_orig;
+	void Decrypt_Aes_hook(void* _this, void* indata, void* outdata, unsigned* ekey) {
+		reinterpret_cast<decltype(Decrypt_Aes_hook)*>(Decrypt_Aes_orig)(_this, indata, outdata, ekey);
+		//wprintf(L"Decrypt_Aes_hook\n");
+	}
+
+	void* Decrypt_Key_orig;
+	void Decrypt_Key_hook(void* _this, void* value) {
+		reinterpret_cast<decltype(Decrypt_Key_hook)*>(Decrypt_Key_orig)(_this, value);
+		//wprintf(L"Decrypt_Key_hook key\n");
+		const auto path = L"C:/Users/long1/Desktop/key.txt";
+		const auto path_str = il2cpp_symbols::NewWStr(path);
+		Write_Byte_hook(path_str, value);
+	}
+
+	void* Decrypt_IV_orig;
+	void Decrypt_IV_hook(void* _this, void* value) {
+		reinterpret_cast<decltype(Decrypt_IV_hook)*>(Decrypt_IV_orig)(_this, value);
+		//wprintf(L"Decrypt_IV_hook key\n");
+		const auto path = L"C:/Users/long1/Desktop/iv.txt";
+		const auto path_str = il2cpp_symbols::NewWStr(path);
+		Write_Byte_hook(path_str, value);
+	}
+
+	void* Decrypt_Padding_orig;
+	void Decrypt_Padding_hook(void* _this, int value) {
+		reinterpret_cast<decltype(Decrypt_Padding_hook)*>(Decrypt_Padding_orig)(_this, value);
+		//wprintf(L"Decrypt_Padding_hook key %d\n", value);
+	}
+
+	void* Decrypt_Mode_orig;
+	void Decrypt_Mode_hook(void* _this, int value) {
+		reinterpret_cast<decltype(Decrypt_Mode_hook)*>(Decrypt_Mode_orig)(_this, value);
+		//wprintf(L"Decrypt_Mode_hook key %d\n", value);
 	}
 
 	void* CriWareErrorHandler_HandleMessage_orig;
@@ -1011,9 +1094,54 @@ namespace
 			"PRISM.Legacy.dll", "ENTERPRISE.OutGame",
 			"EncryptionUtility", "Decrypt", 3
 		);
+		auto Sqlite_BackUp_addr = il2cpp_symbols::get_method_pointer(
+			"Emberbox.dll", "SQLite",
+			"SQLiteConnection", "Backup", 2
+		);
 		auto Sqlite_Set_addr = il2cpp_symbols::get_method_pointer(
 			"Emberbox.dll", "SQLite",
 			"SQLiteConnection", "set_DatabasePath", 1
+		);
+		auto Sqlite_Ctor_addr = il2cpp_symbols::get_method_pointer(
+			"Emberbox.dll", "SQLite",
+			"SQLiteConnection", ".ctor", 1
+		);
+		auto Sqlite_Close_addr = il2cpp_symbols::get_method_pointer(
+			"Emberbox.dll", "SQLite",
+			"SQLiteConnection", "Close", 0
+		);
+		auto Sqlite_Execute_addr = il2cpp_symbols::get_method_pointer(
+			"Emberbox.dll", "SQLite",
+			"SQLiteConnection", "Execute", 2
+		);
+		auto Sqlite_Commit_addr = il2cpp_symbols::get_method_pointer(
+			"Emberbox.dll", "SQLite",
+			"SQLiteConnection", "Commit", 0
+		);
+		auto Decrypt_Aes_addr = il2cpp_symbols::get_method_pointer(
+			"System.Core.dll", "System.Security.Cryptography",
+			"AesTransform", "Decrypt128", 3
+		);
+		auto Decrypt_Key_addr = il2cpp_symbols::get_method_pointer(
+			"System.Core.dll", "System.Security.Cryptography",
+			"AesCryptoServiceProvider", "set_Key", 1
+		);
+		auto Decrypt_IV_addr = il2cpp_symbols::get_method_pointer(
+			"System.Core.dll", "System.Security.Cryptography",
+			"AesCryptoServiceProvider", "set_IV", 1
+		);
+		auto Decrypt_Padding_addr = il2cpp_symbols::get_method_pointer(
+			"System.Core.dll", "System.Security.Cryptography",
+			"AesCryptoServiceProvider", "set_Padding", 1
+		);
+
+		auto Decrypt_Mode_addr = il2cpp_symbols::get_method_pointer(
+			"System.Core.dll", "System.Security.Cryptography",
+			"AesCryptoServiceProvider", "set_Mode", 1
+		);
+		auto Write_Byte_addr = il2cpp_symbols::get_method_pointer(
+			"mscorlib.dll", "System.IO",
+			"File", "WriteAllBytes", 2
 		);
 		auto CriWareErrorHandler_HandleMessage_addr = il2cpp_symbols::get_method_pointer(
 			"CriMw.CriWare.Runtime.dll", "CriWare",
@@ -1073,7 +1201,18 @@ namespace
 		ADD_HOOK(Live_SetEnableDepthOfField, "Live_SetEnableDepthOfField at %p");
 		ADD_HOOK(Live_Update, "Live_Update at %p");
 		ADD_HOOK(Decrypt_File, "Decrypt_File at %p")
+		ADD_HOOK(Sqlite_BackUp, "Sqlite_BackUp at %p")
+		ADD_HOOK(Sqlite_Execute, "Sqlite_Execute at %p")
+		ADD_HOOK(Sqlite_Commit, "Sqlite_Commit at %p")
 		ADD_HOOK(Sqlite_Set, "Sqlite_Set at %p")
+		ADD_HOOK(Sqlite_Ctor, "Sqlite_Ctor at %p")
+		ADD_HOOK(Sqlite_Close, "Sqlite_Close at %p")
+		ADD_HOOK(Write_Byte, "Write_Byte at %p")
+		ADD_HOOK(Decrypt_Aes, "Decrypt_Aes at %p")
+		ADD_HOOK(Decrypt_Key, "Decrypt_Key at %p")
+		ADD_HOOK(Decrypt_IV, "Decrypt_IV at %p")
+		ADD_HOOK(Decrypt_Padding, "Decrypt_Padding at %p")
+		ADD_HOOK(Decrypt_Mode, "Decrypt_Mode at %p")
 		ADD_HOOK(CriWareErrorHandler_HandleMessage, "CriWareErrorHandler_HandleMessage at %p");
 		ADD_HOOK(GGIregualDetector_ShowPopup, "GGIregualDetector_ShowPopup at %p");
 		ADD_HOOK(DMMGameGuard_NPGameMonCallback, "DMMGameGuard_NPGameMonCallback at %p");
