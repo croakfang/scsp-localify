@@ -536,9 +536,14 @@ namespace
 	}
 
 	void* Decrypt_File_orig;
-	void Decrypt_File_hook(Il2CppString* target, Il2CppString* password, Il2CppString* salt) {
-		wprintf(L"Decrypt_File_hook: target: %ls, password: %ls, salt: %ls\n", target->start_char, password->start_char, salt->start_char);
-		return reinterpret_cast<decltype(Decrypt_File_hook)*>(Decrypt_File_orig)(target, password, salt);
+	Il2CppString* Decrypt_File_hook(Il2CppString* target, Il2CppString* password, Il2CppString* salt) {
+		Il2CppString* result = reinterpret_cast<decltype(Decrypt_File_hook)*>(Decrypt_File_orig)(target, password, salt);
+		wprintf(L"Decrypt_File_hook: target: %ls, password: %ls, salt: %ls, return: %ls\n", 
+			target->start_char, 
+			password->start_char, 
+			salt->start_char, 
+			result->start_char);
+		return result;
 	}
 
 	void* CriWareErrorHandler_HandleMessage_orig;
