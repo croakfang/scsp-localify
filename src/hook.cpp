@@ -535,6 +535,12 @@ namespace
 		}
 	}
 
+	void* Decrypt_File_orig;
+	void Decrypt_File_hook(Il2CppString* target, Il2CppString* password, Il2CppString* salt) {
+		wprintf(L"Decrypt_File_hook: target: %ls, password: %ls, salt: %ls\n", target->start_char, password->start_char, salt->start_char);
+		return reinterpret_cast<decltype(Decrypt_File_hook)*>(Decrypt_File_orig)(target, password, salt);
+	}
+
 	void* CriWareErrorHandler_HandleMessage_orig;
 	void CriWareErrorHandler_HandleMessage_hook(void* _this, Il2CppString* msg) {
 		// wprintf(L"CriWareErrorHandler_HandleMessage: %ls\n%ls\n\n", msg->start_char, environment_get_stacktrace()->start_char);
@@ -990,6 +996,10 @@ namespace
 			"PRISM.Legacy.dll", "PRISM",
 			"LiveScene", "Update", 0
 		);
+		auto Decrypt_File_addr = il2cpp_symbols::get_method_pointer(
+			"PRISM.Legacy.dll", "ENTERPRISE.OutGame",
+			"EncryptionUtility", "Decrypt", 3
+		);
 		auto CriWareErrorHandler_HandleMessage_addr = il2cpp_symbols::get_method_pointer(
 			"CriMw.CriWare.Runtime.dll", "CriWare",
 			"CriWareErrorHandler", "HandleMessage", 1
@@ -1047,6 +1057,7 @@ namespace
 		ADD_HOOK(InvokeMoveNext, "InvokeMoveNext at %p");
 		ADD_HOOK(Live_SetEnableDepthOfField, "Live_SetEnableDepthOfField at %p");
 		ADD_HOOK(Live_Update, "Live_Update at %p");
+		ADD_HOOK(Decrypt_File, "Decrypt_File at %p")
 		ADD_HOOK(CriWareErrorHandler_HandleMessage, "CriWareErrorHandler_HandleMessage at %p");
 		ADD_HOOK(GGIregualDetector_ShowPopup, "GGIregualDetector_ShowPopup at %p");
 		ADD_HOOK(DMMGameGuard_NPGameMonCallback, "DMMGameGuard_NPGameMonCallback at %p");
