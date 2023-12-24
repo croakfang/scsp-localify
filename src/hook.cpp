@@ -1013,7 +1013,7 @@ namespace
 		);
 		auto Sqlite_Set_addr = il2cpp_symbols::get_method_pointer(
 			"Emberbox.dll", "SQLite",
-			"set_DatabasePath", "Decrypt", 1
+			"SQLiteConnection", "set_DatabasePath", 1
 		);
 		auto CriWareErrorHandler_HandleMessage_addr = il2cpp_symbols::get_method_pointer(
 			"CriMw.CriWare.Runtime.dll", "CriWare",
